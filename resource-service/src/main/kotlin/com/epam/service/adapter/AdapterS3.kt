@@ -1,6 +1,7 @@
 package com.epam.service.adapter
 
 import com.epam.exception.CustomException
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
@@ -21,11 +22,8 @@ import java.net.URI
 
 @Component
 class AdapterS3 {
-    private val s3Client: S3Client = S3Client.builder()
-        .region(Region.US_EAST_1)
-        .endpointOverride(URI.create("http://localhost:4566"))
-        .forcePathStyle(true)
-        .build()
+    @Autowired
+    private lateinit var s3Client: S3Client
 
     @Retryable(include = [SdkClientException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
     fun putResource(inputStream: InputStream, id: String, bucket: String) {

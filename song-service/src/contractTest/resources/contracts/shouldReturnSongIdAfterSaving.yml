@@ -1,0 +1,14 @@
+description: should return song id after saving it
+name: save song and return song id
+request:
+  method: POST
+  url: /api/songs
+  body:
+    name: "testname"
+    artist: "testartist"
+    album: "testalbum"
+    resourceId: 1
+response:
+  status: 200
+  body:
+    id: 1

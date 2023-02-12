@@ -1,5 +1,6 @@
 package com.epam.service.adapter
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.sqs.SqsClient
@@ -11,11 +12,8 @@ import java.net.URI
 
 @Service
 class AdapterSQS {
-
-    private val sqsClient: SqsClient = SqsClient.builder()
-        .region(Region.US_EAST_1)
-        .endpointOverride(URI.create("http://localhost:4566"))
-        .build()
+    @Autowired
+    private lateinit var sqsClient: SqsClient
 
     fun putMessage(message: String, queueName: String) {
         val url = getQueueUrl(queueName) ?: sqsClient

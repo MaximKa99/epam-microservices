@@ -18,8 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api")
 class SongController(
     val songService: SongService,
-)
-{
+) {
 
     @PostMapping("/songs")
     fun saveSong(@RequestBody songView: SongView): SongIdView {
