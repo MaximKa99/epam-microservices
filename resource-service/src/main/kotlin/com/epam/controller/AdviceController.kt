@@ -15,6 +15,10 @@ class AdviceController {
             return ResponseEntity(ex.message, HttpStatus.BAD_REQUEST)
         }
 
+        if (ex.code == 404) {
+            return ResponseEntity(ex.message, HttpStatus.NOT_FOUND)
+        }
+
         return ResponseEntity(ex.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }

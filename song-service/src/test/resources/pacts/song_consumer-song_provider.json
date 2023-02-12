@@ -1,0 +1,60 @@
+{
+  "consumer": {
+    "name": "song_consumer"
+  },
+  "interactions": [
+    {
+      "description": "a request to save",
+      "key": "311f4ffe",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "try to save song"
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "album": null,
+            "artist": "test",
+            "length": null,
+            "name": "test",
+            "resourceId": 1,
+            "year": null
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "method": "POST",
+        "path": "/api/songs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "id": 1
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pact-jvm": {
+      "version": "4.3.7"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "song_provider"
+  }
+}

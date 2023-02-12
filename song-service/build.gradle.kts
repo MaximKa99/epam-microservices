@@ -26,8 +26,20 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("com.h2database:h2:2.1.214")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.mockk:mockk:1.13.4")
+    testImplementation("au.com.dius.pact.provider:junit5spring:4.3.7")
+    testImplementation("io.cucumber:cucumber-java:7.11.1")
+    testImplementation("io.cucumber:cucumber-junit:7.11.1")
+    testImplementation("io.cucumber:cucumber-spring:7.11.1")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
 }
 
 application {
     mainClass.set("com.epam.App")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

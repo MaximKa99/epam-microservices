@@ -1,6 +1,7 @@
 package com.epam.service.adapter
 
 import com.epam.exception.CustomException
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
@@ -16,16 +17,12 @@ import java.net.URI
 @Service
 class AdapterSQS {
 
-    private val sqsClient: SqsClient = SqsClient.builder()
-        .region(Region.US_EAST_1)
-        .endpointOverride(URI.create("http://localhost:4566"))
-        .build()
+    @Autowired
+    private lateinit var sqsClient: SqsClient
 
     @Retryable(include = [SdkClientException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
     fun getMessages(queueName: String): List<Message> {
-        val url = getQueueUrl(queueName)
-
-        return when (url) {
+        return when (val url = getQueueUrl(queueName)) {
             null -> return emptyList()
             else -> sqsClient
                 .receiveMessage(ReceiveMessageRequest.builder().queueUrl(url).build())
@@ -35,9 +32,7 @@ class AdapterSQS {
 
     @Retryable(include = [SdkClientException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
     fun deleteMessage(queueName: String, receiptHandler: String) {
-        val url = getQueueUrl(queueName)
-
-        when (url) {
+        when (val url = getQueueUrl(queueName)) {
             null -> throw CustomException("No such queue: $queueName", 500)
             else -> sqsClient
                 .deleteMessage(DeleteMessageRequest.builder().queueUrl(url).receiptHandle(receiptHandler).build())

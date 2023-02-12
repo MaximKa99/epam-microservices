@@ -5,6 +5,7 @@ import com.epam.view.SongIdView
 import com.epam.view.SongView
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Backoff
@@ -15,10 +16,10 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import software.amazon.awssdk.core.exception.SdkClientException
 
 @Service
-class SongServiceAdapter {
-    @Autowired
-    private lateinit var mapper: ObjectMapper
-    private val webClient = WebClient.create("http://localhost:8070")
+class SongServiceAdapter(
+    private val mapper: ObjectMapper,
+    @Qualifier("song") private val webClient: WebClient
+) {
 
     @Retryable(include = [WebClientRequestException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
     fun saveSong(songView: SongView): SongIdView {

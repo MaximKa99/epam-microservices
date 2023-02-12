@@ -27,4 +27,16 @@ dependencies {
     implementation("software.amazon.awssdk:sqs:2.19.26")
 
     implementation("org.apache.tika:tika-parsers:1.24.1")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.mockk:mockk:1.13.4")
+    testImplementation("org.testcontainers:testcontainers:1.17.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
+    testImplementation("com.github.tomakehurst:wiremock:2.27.2")
+
+    testImplementation("au.com.dius.pact.consumer:junit5:4.3.7")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
