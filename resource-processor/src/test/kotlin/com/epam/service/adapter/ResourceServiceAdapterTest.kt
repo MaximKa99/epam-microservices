@@ -1,27 +1,52 @@
 package com.epam.service.adapter
 
-import com.epam.config.WiremockConfig
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.common.ConsoleNotifier
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.springframework.web.client.HttpClientErrorException
 
 @SpringBootTest(
         classes = [
-            WiremockConfig::class
+            ResourceServiceAdapter::class
         ]
 )
 class ResourceServiceAdapterTest {
     @Autowired
-    private lateinit var wiremock: WireMockServer
-
-    @Autowired
     private lateinit var underTest: ResourceServiceAdapter
+
+    companion object {
+        @JvmStatic
+        private val wiremock = WireMockServer(WireMockConfiguration().notifier(ConsoleNotifier(true)).dynamicPort())
+
+        @JvmStatic
+        @DynamicPropertySource
+        fun properties(registry: DynamicPropertyRegistry) {
+            registry.add("services.resource", wiremock::baseUrl)
+        }
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            wiremock.start()
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun tearDown() {
+            wiremock.stop()
+        }
+    }
 
     @Test
     fun `get resource`() {

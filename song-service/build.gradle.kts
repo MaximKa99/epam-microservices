@@ -25,7 +25,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation("com.h2database:h2:2.1.214")
+    implementation("org.postgresql:postgresql:42.5.3")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.mockk:mockk:1.13.4")
@@ -34,6 +34,9 @@ dependencies {
     testImplementation("io.cucumber:cucumber-junit:7.11.1")
     testImplementation("io.cucumber:cucumber-spring:7.11.1")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
+    testImplementation("org.testcontainers:testcontainers:1.17.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
+    testImplementation("org.testcontainers:postgresql:1.17.6")
 }
 
 application {
