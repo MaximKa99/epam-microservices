@@ -9,7 +9,7 @@ import javax.persistence.Id
 @Entity
 class Song {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
 
     var name: String? = null

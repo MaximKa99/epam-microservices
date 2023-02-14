@@ -31,12 +31,14 @@ dependencies {
     implementation("software.amazon.awssdk:s3:2.19.26")
     implementation("software.amazon.awssdk:sqs:2.19.26")
 
-    implementation("com.h2database:h2:2.1.214")
+    implementation("org.postgresql:postgresql:42.5.3")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.mockk:mockk:1.13.4")
     testImplementation("org.testcontainers:testcontainers:1.17.6")
     testImplementation("org.testcontainers:junit-jupiter:1.17.6")
+    testImplementation("org.testcontainers:postgresql:1.17.6")
+    testImplementation("org.testcontainers:localstack:1.17.6")
 
 }
 

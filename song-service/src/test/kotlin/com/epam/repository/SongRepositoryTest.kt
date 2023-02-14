@@ -1,18 +1,27 @@
 package com.epam.repository
 
+import com.epam.container.PostgresContainer
 import com.epam.model.Song
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.annotation.Rollback
+import org.springframework.context.annotation.Import
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ContextConfiguration
+import org.testcontainers.junit.jupiter.Testcontainers
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 import javax.transaction.Transactional
 
-@SpringBootTest
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ContextConfiguration(
+        initializers = [PostgresContainer::class]
+)
 @Transactional
+@DirtiesContext
 class SongRepositoryTest {
     @Autowired
     private lateinit var underTest: SongRepository

@@ -1,5 +1,6 @@
 package com.epam.cucumber
 
+import com.epam.container.PostgresContainer
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.cucumber.spring.CucumberContextConfiguration
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,11 +9,17 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
 import java.net.URI
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @CucumberContextConfiguration
+@ContextConfiguration(
+        initializers = [PostgresContainer::class]
+)
+@DirtiesContext
 class SpringCucumberBase {
     @LocalServerPort
     private lateinit var port: String
