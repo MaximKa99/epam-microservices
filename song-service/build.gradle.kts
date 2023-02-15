@@ -40,7 +40,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.epam.App")
+    mainClass.set("com.epam.AppKt")
 }
 
 tasks.withType<Test> {
