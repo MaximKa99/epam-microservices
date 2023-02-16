@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.spring") version "1.8.0"
     id("org.springframework.boot") version "2.7.2"
     id("io.spring.dependency-management") version "1.1.0"
+    application
 }
 
 group "org.example"
@@ -35,6 +36,10 @@ dependencies {
     testImplementation("com.github.tomakehurst:wiremock:2.27.2")
 
     testImplementation("au.com.dius.pact.consumer:junit5:4.3.7")
+}
+
+application {
+    mainClass.set("com.epam.AppKt")
 }
 
 tasks.withType<Test> {

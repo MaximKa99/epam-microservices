@@ -1,0 +1,56 @@
+version: "3.9"
+services:
+  resource-processor:
+    build: ./resource-processor
+    ports:
+      - "8090:8080"
+    depends_on:
+      - song
+      - localstack
+      - resource
+    environment:
+      AWS_ENDPOINT: ${AWS_ENDPOINT}
+      SERVICES_SONG: ${SERVICES_SONG}
+      SERVICES_RESOURCE: ${SERVICES_RESOURCE}
+  song:
+    build: ./song-service
+    ports:
+      - "8070:8080"
+    depends_on:
+      - song-postgres
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://song-postgres:5432/${POSTGRES_DB}
+  resource:
+    build: ./resource-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - resource-postgres
+      - localstack
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://resource-postgres:5432/${POSTGRES_DB}
+      AWS_ENDPOINT: ${AWS_ENDPOINT}
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+  resource-postgres:
+    image: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+  song-postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
