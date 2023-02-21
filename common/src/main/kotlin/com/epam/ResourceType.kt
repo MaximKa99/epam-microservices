@@ -10,6 +10,7 @@ enum class ResourceType(
     Audio("audio/mpeg", "audio", "audio.fifo");
 
     companion object {
+        const val HEADER_NAME = "Resource-Type"
         fun of(value: String): ResourceType {
             return when(value) {
                 Audio.type -> Audio
