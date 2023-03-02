@@ -1,8 +1,7 @@
 package com.epam.cucumber
 
-import com.epam.controller.SongController
-import com.epam.view.SongIdView
-import com.epam.view.SongView
+import com.epam.dto.SongIdView
+import com.epam.dto.SongView
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
@@ -10,7 +9,6 @@ import io.cucumber.java.en.When
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.annotation.DirtiesContext
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SongSaveSteps: SpringCucumberBase(){
@@ -20,10 +18,10 @@ class SongSaveSteps: SpringCucumberBase(){
     private var actual: SongIdView? = null
 
     @Given("song with resource id {int}")
-    fun setup(id: Int) {
-        songView = SongView(
-                resourceId = id
-        )
+    fun setup(id: Long) {
+        songView = SongView().apply {
+            resourceId = id
+        }
     }
 
     @When("attempt to save it")

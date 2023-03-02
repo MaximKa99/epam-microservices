@@ -1,9 +1,9 @@
 package com.epam.service
 
-import com.epam.exception.CustomException
+import CustomException
+import com.epam.dto.SongView
 import com.epam.model.Song
 import com.epam.repository.SongRepository
-import com.epam.view.SongView
 import io.mockk.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -20,13 +20,15 @@ class SongServiceTest {
 
     @Test
     fun `save song`() {
-        val expected = 1
+        val expected = 1L
 
         every { repository.save(any()) } returns Song().apply {
             id = expected
         }
 
-        val songView = SongView(resourceId = 1)
+        val songView = SongView().apply {
+            resourceId = 1
+        }
         val actualResult = underTest.saveSong(songView)
 
         Assertions.assertEquals(expected, actualResult)
@@ -38,7 +40,9 @@ class SongServiceTest {
 
         val expected = CustomException("smth went wrong", 500)
 
-        val songView = SongView(resourceId = 1)
+        val songView = SongView().apply {
+            resourceId = 1
+        }
         val actual = Assertions.assertThrows(CustomException::class.java) { underTest.saveSong(songView) }
 
         Assertions.assertEquals(expected.code, actual.code)

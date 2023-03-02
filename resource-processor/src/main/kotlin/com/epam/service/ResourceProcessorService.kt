@@ -1,10 +1,10 @@
 package com.epam.service
 
-import com.epam.ResourceType
+import com.epam.dto.SongView
+import com.epam.model.ResourceType
 import com.epam.service.adapter.AdapterSQS
 import com.epam.service.adapter.ResourceServiceAdapter
 import com.epam.service.adapter.SongServiceAdapter
-import com.epam.view.SongView
 import org.apache.tika.parser.AutoDetectParser
 import org.apache.tika.parser.ParseContext
 import org.apache.tika.sax.BodyContentHandler
@@ -25,13 +25,13 @@ class ResourceProcessorService(
     @Scheduled(fixedDelay = 5000)
     fun processAudioQueue() {
         adapterSQS.getMessages(ResourceType.Audio.queue).forEach {
-            val byteArray = resourceServiceAdapter.getResource(it.body())
+            val byteArray = resourceServiceAdapter.getResource(it.body().toLong()).body?.inputStream
 
             val handler = BodyContentHandler()
             val metadata = org.apache.tika.metadata.Metadata()
             val parser = AutoDetectParser()
             val parseContext = ParseContext()
-            parser.parse(ByteArrayInputStream(byteArray), handler, metadata, parseContext)
+            parser.parse(byteArray, handler, metadata, parseContext)
 
             val length = metadata.get("xmpDM:duration")
             val name = metadata.get("title")
@@ -40,7 +40,7 @@ class ResourceProcessorService(
                 SongView(
                     name = name,
                     length = length,
-                    resourceId = it.body().toInt()
+                    resourceId = it.body().toLong()
                 )
             )
 

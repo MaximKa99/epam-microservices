@@ -11,7 +11,7 @@ import javax.persistence.Table
 class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    var id: Int? = null
+    var id: Long? = null
 
     var type: String? = null
 

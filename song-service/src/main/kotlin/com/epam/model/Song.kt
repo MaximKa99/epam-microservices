@@ -10,7 +10,7 @@ import javax.persistence.Id
 class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int? = null
+    var id: Long? = null
 
     var name: String? = null
 
@@ -21,7 +21,7 @@ class Song {
     var length: String? = null
 
     @Column(unique = true)
-    var resourceId: Int? = null
+    var resourceId: Long? = null
 
     var year: String? = null
 }

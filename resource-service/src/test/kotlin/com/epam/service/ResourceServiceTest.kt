@@ -1,9 +1,9 @@
 package com.epam.service
 
-import com.epam.ResourceType
 import com.epam.exception.CustomException
 import com.epam.model.OutboxEvent
 import com.epam.model.Resource
+import com.epam.model.ResourceType
 import com.epam.repository.OutboxEventRepository
 import com.epam.repository.ResourceRepository
 import com.epam.service.adapter.AdapterS3
@@ -39,7 +39,7 @@ class ResourceServiceTest {
 
     @Test
     fun `save resource`() {
-        val expected = 1
+        val expected = 1L
         every { resourceRepository.save(any()) } returns Resource().apply {
             id = expected
         }

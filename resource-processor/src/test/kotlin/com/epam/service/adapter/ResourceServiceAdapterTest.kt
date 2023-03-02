@@ -57,7 +57,7 @@ class ResourceServiceAdapterTest {
                         .willReturn(aResponse().withBody(expected))
         )
 
-        val actual = underTest.getResource("1")
+        val actual = underTest.getResource(1).body.inputStream.readAllBytes()
 
         assertArrayEquals(expected, actual)
     }
@@ -71,7 +71,7 @@ class ResourceServiceAdapterTest {
                         .willReturn(aResponse().withStatus(404).withBody(expected))
         )
 
-        val actual = assertThrows(HttpClientErrorException::class.java){ underTest.getResource("2") }
+        val actual = assertThrows(HttpClientErrorException::class.java){ underTest.getResource(2) }
 
         assertEquals(expected, actual.responseBodyAsString)
         assertEquals(HttpStatus.NOT_FOUND, actual.statusCode)

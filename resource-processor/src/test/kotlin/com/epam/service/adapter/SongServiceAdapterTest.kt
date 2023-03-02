@@ -1,8 +1,8 @@
 package com.epam.service.adapter
 
 import com.epam.config.ExternalServicesConfig
-import com.epam.view.SongIdView
-import com.epam.view.SongView
+import com.epam.dto.SongIdView
+import com.epam.dto.SongView
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -67,8 +67,8 @@ class SongServiceAdapterTest {
 
         val actual = underTest.saveSong(SongView(
                 resourceId = 1
-        ))
+        )).body
 
-        assertEquals(expected.id, actual.id)
+        assertEquals(expected.id, actual?.id)
     }
 }
