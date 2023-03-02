@@ -1,10 +1,10 @@
 package com.epam.service
 
-import com.epam.ResourceType
-import com.epam.event.ResourceIdEvent
+import com.epam.model.event.ResourceIdEvent
 import com.epam.exception.CustomException
 import com.epam.model.OutboxEvent
 import com.epam.model.Resource
+import com.epam.model.ResourceType
 import com.epam.repository.OutboxEventRepository
 import com.epam.repository.ResourceRepository
 import com.epam.service.adapter.AdapterS3
@@ -27,7 +27,7 @@ class ResourceService(
 ) {
 
     @Transactional
-    fun saveResource(stream: InputStream, type: String): Int {
+    fun saveResource(stream: InputStream, type: String): Long {
         val resource = Resource()
 
         when (ResourceType.of(type)) {
@@ -56,7 +56,7 @@ class ResourceService(
     }
 
     @Transactional(readOnly = true)
-    fun getResource(id: Int): InputStream {
+    fun getResource(id: Long): InputStream {
         val resourceOptional = resourceRepository.findById(id)
 
         if (resourceOptional.isEmpty) {
@@ -74,7 +74,7 @@ class ResourceService(
     }
 
     @Transactional
-    fun deleteResource(id: Int): Int {
+    fun deleteResource(id: Long): Long {
         val resourceOptional = resourceRepository.findById(id)
 
         if (resourceOptional.isEmpty) {

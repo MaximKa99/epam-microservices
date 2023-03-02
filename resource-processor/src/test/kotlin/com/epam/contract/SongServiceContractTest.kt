@@ -6,9 +6,9 @@ import au.com.dius.pact.consumer.junit5.PactConsumerTestExt
 import au.com.dius.pact.consumer.junit5.PactTestFor
 import au.com.dius.pact.core.model.V4Pact
 import au.com.dius.pact.core.model.annotations.Pact
+import com.epam.dto.SongIdView
+import com.epam.dto.SongView
 import com.epam.service.adapter.SongServiceAdapter
-import com.epam.view.SongIdView
-import com.epam.view.SongView
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -32,10 +32,11 @@ class SongServiceContractTest {
                     .uponReceiving("a request to save")
                     .path("/api/songs")
                     .method("POST")
-                    .body(objectMapper.writeValueAsString(SongView(resourceId = 1).apply {
-                        name = "test"
-                        artist = "test"
-                    }))
+                    .body(objectMapper.writeValueAsString(SongView(
+                        name = "test",
+                        artist = "test",
+                        resourceId = 1L
+                    )))
                     .willRespondWith()
                     .status(200)
                     .headers(mapOf(HttpHeaders.CONTENT_TYPE to MediaType.APPLICATION_JSON_VALUE))
@@ -46,11 +47,12 @@ class SongServiceContractTest {
     @PactTestFor(pactMethod = "save song")
     fun `run save song test`(mockServer: MockServer) {
         val songServiceAdapter = SongServiceAdapter(objectMapper, WebClient.create(mockServer.getUrl()))
-        val actual = songServiceAdapter.saveSong(SongView(resourceId = 1).apply {
-            name = "test"
-            artist = "test"
-        })
+        val actual = songServiceAdapter.saveSong(SongView(
+            name = "test",
+            artist = "test",
+            resourceId = 1L
+        )).body
 
-        assertEquals(1, actual.id)
+        assertEquals(1, actual?.id)
     }
 }
