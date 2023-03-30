@@ -10,8 +10,11 @@ plugins {
     application
 }
 
-group "org.example"
-version "1.0-SNAPSHOT"
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2021.0.5")
+    }
+}
 
 repositories {
     mavenCentral()
@@ -24,6 +27,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     implementation("org.springframework.retry:spring-retry")
     runtimeOnly("org.springframework.boot:spring-boot-starter-aop")
 
@@ -52,7 +56,7 @@ val apiList = listOf("CommonModel", "ResourceApi", "SongApi")
 
 val generateTasks = apiList.map {
     tasks.register(it + "_generate", GenerateTask::class.java) {
-        generatorName.set("kotlin-spring")
+        generatorName.set("spring")
         inputSpec.set("$rootDir/resource-service/api/$it.yaml")
         outputDir.set("$buildDir/generated")
         modelPackage.set("com.epam.dto")
@@ -63,7 +67,8 @@ val generateTasks = apiList.map {
             "interfaceOnly" to "true",
             "useTags" to "true",
             "useSwaggerUI" to "false",
-            "documentationProvider" to "none"
+            "documentationProvider" to "none",
+            "library" to "spring-cloud"
         ))
     }
 }
@@ -93,7 +98,7 @@ tasks.register("openApiGenerateAll") {
 
 
 sourceSets["main"].java {
-    srcDirs("$buildDir/generated/src/main/kotlin")
+    srcDirs("$buildDir/generated/src/main/java")
 }
 
 tasks.swaggerhubUpload {

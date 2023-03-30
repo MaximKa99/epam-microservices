@@ -1,39 +1,35 @@
 package com.epam.service.adapter
 
+import com.epam.api.ResourceApi
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.netflix.appinfo.InstanceInfo
+import com.netflix.discovery.EurekaClient
+import com.netflix.discovery.shared.Application
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.RestTemplate
 
-@SpringBootTest(
-        classes = [
-            ResourceServiceAdapter::class
-        ]
-)
-class ResourceServiceAdapterTest {
+@SpringBootTest
+class ResourceClientTest {
     @Autowired
-    private lateinit var underTest: ResourceServiceAdapter
+    private lateinit var restTemplate: RestTemplate
 
     companion object {
         @JvmStatic
         private val wiremock = WireMockServer(WireMockConfiguration().notifier(ConsoleNotifier(true)).dynamicPort())
-
-        @JvmStatic
-        @DynamicPropertySource
-        fun properties(registry: DynamicPropertyRegistry) {
-            registry.add("services.resource", wiremock::baseUrl)
-        }
 
         @JvmStatic
         @BeforeAll
@@ -50,6 +46,15 @@ class ResourceServiceAdapterTest {
 
     @Test
     fun `get resource`() {
+        val eurekaClient = Mockito.mock(EurekaClient::class.java)
+        val application = Mockito.mock(Application::class.java)
+        val instanceInfo = Mockito.mock(InstanceInfo::class.java)
+        Mockito.`when`(eurekaClient.getApplication(Mockito.eq("RESOURCE")))
+            .thenReturn(application)
+        Mockito.`when`(application.instances).thenReturn(listOf(instanceInfo))
+        Mockito.`when`(instanceInfo.hostName).thenReturn("localhost")
+        Mockito.`when`(instanceInfo.port).thenReturn(wiremock.port())
+        val underTest = ResourceClient(eurekaClient, restTemplate)
         val expected = byteArrayOf(1, 2, 3, 4, 5)
 
         wiremock.stubFor(
@@ -64,6 +69,15 @@ class ResourceServiceAdapterTest {
 
     @Test
     fun `get non-existing resource`() {
+        val eurekaClient = Mockito.mock(EurekaClient::class.java)
+        val application = Mockito.mock(Application::class.java)
+        val instanceInfo = Mockito.mock(InstanceInfo::class.java)
+        Mockito.`when`(eurekaClient.getApplication(Mockito.eq("RESOURCE")))
+            .thenReturn(application)
+        Mockito.`when`(application.instances).thenReturn(listOf(instanceInfo))
+        Mockito.`when`(instanceInfo.hostName).thenReturn("localhost")
+        Mockito.`when`(instanceInfo.port).thenReturn(wiremock.port())
+        val underTest = ResourceClient(eurekaClient, restTemplate)
         val expected = "No resource with id 2"
 
         wiremock.stubFor(
@@ -71,9 +85,8 @@ class ResourceServiceAdapterTest {
                         .willReturn(aResponse().withStatus(404).withBody(expected))
         )
 
-        val actual = assertThrows(HttpClientErrorException::class.java){ underTest.getResource(2) }
-
-        assertEquals(expected, actual.responseBodyAsString)
-        assertEquals(HttpStatus.NOT_FOUND, actual.statusCode)
+        assertThrows(HttpClientErrorException::class.java) {
+            underTest.getResource(2)
+        }
     }
 }

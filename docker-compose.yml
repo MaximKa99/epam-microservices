@@ -1,39 +1,62 @@
 version: "3.9"
 services:
+  gateway:
+    build: ./gateway
+    ports:
+      - "8080:8080"
+      - "50005:50005"
+    environment:
+      SERVICE_REGISTRY: ${SERVICE_REGISTRY}
+    depends_on:
+      - service-registry
+      - song
+      - resource
+      - resource-processor
+  service-registry:
+    build: ./service-registry
+    ports:
+      - "8761:8761"
+      - "50006:50005"
   resource-processor:
     build: ./resource-processor
     ports:
-      - "8090:8080"
+      - "50007:50005"
     depends_on:
       - song
       - localstack
       - resource
+      - service-registry
     environment:
       AWS_ENDPOINT: ${AWS_ENDPOINT}
       SERVICES_SONG: ${SERVICES_SONG}
       SERVICES_RESOURCE: ${SERVICES_RESOURCE}
+      SERVICE_REGISTRY: ${SERVICE_REGISTRY}
   song:
     build: ./song-service
     ports:
-      - "8070:8080"
+      - "50008:50005"
     depends_on:
       - song-postgres
+      - service-registry
     environment:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SPRING_DATASOURCE_URL: jdbc:postgresql://song-postgres:5432/${POSTGRES_DB}
+      SERVICE_REGISTRY: ${SERVICE_REGISTRY}
   resource:
     build: ./resource-service
     ports:
-      - "8080:8080"
+      - "50009:50005"
     depends_on:
       - resource-postgres
+      - service-registry
       - localstack
     environment:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SPRING_DATASOURCE_URL: jdbc:postgresql://resource-postgres:5432/${POSTGRES_DB}
       AWS_ENDPOINT: ${AWS_ENDPOINT}
+      SERVICE_REGISTRY: ${SERVICE_REGISTRY}
   localstack:
     image: localstack/localstack
     ports:

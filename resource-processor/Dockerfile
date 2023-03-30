@@ -6,4 +6,4 @@ ENV SERVICES_RESOURCE="http://localhost:8080"
 
 COPY ./build/libs/resource-processor.jar app.jar
 
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java",  "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:50005", "-jar", "app.jar"]

@@ -10,7 +10,7 @@ import javax.persistence.Table
 @Table(name = "Resources")
 class Resource {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
     var type: String? = null
