@@ -1,20 +1,13 @@
 package com.epam.config
 
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.client.RestTemplate
 
 @Configuration
+@EnableDiscoveryClient
 class ExternalServicesConfig {
-    @Value("\${services.song}")
-    private lateinit var songUrl: String
-    @Value("\${services.resource}")
-    private lateinit var resourceUrl: String
-
-    @Bean("song")
-    fun songWebClient() = WebClient.create(songUrl)
-
-    @Bean("resource")
-    fun resourceWebClient() = WebClient.create(resourceUrl)
+    @Bean
+    fun restTemplate(): RestTemplate = RestTemplate()
 }

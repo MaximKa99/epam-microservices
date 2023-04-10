@@ -1,5 +1,4 @@
 import io.swagger.swaggerhub.tasks.DownloadTask
-import org.jetbrains.kotlin.utils.identity
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
@@ -13,8 +12,13 @@ plugins {
     application
 }
 
-group "com.epam"
-version "1.0"
+group = "com.epam"
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2021.0.5")
+    }
+}
 
 repositories {
     mavenCentral()
@@ -27,6 +31,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("io.swagger.core.v3:swagger-annotations:2.2.8")

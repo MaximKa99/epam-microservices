@@ -6,4 +6,4 @@ ENV SPRING_DATASOURCE_PASSWORD=password
 
 COPY ./build/libs/song-service.jar app.jar
 
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java",  "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:50005", "-jar", "app.jar"]

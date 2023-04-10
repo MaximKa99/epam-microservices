@@ -1,0 +1,17 @@
+server:
+  port: 8090
+aws:
+  endpoint: http://localhost:4566
+
+ribbon:
+  eureka:
+    enabled: false
+
+spring:
+  application:
+    name: resource-processor
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${SERVICE_REGISTRY:http://localhost:8761/eureka}
