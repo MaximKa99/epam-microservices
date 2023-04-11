@@ -1,3 +1,5 @@
+import plugin.ApiDownloadTask
+
 plugins {
     kotlin("jvm") version "1.8.10"
     id("io.swagger.swaggerhub") version "1.0.1"
@@ -20,6 +22,12 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
     testImplementation("io.mockk:mockk:1.13.4")
+}
+
+tasks.register("downloadApis", ApiDownloadTask::class.java) {
+    api = "CommonModel"
+    token = "GHSAT0AAAAAACAZQZBZFW367SWQA36MXINSZBVEPMQ"
+    outputFile = "$rootDir/common/api/CommonModel2.yaml"
 }
 
 sourceSets["main"].java {
