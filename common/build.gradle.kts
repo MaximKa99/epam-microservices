@@ -26,7 +26,8 @@ dependencies {
 
 tasks.register("downloadApis", ApiDownloadTask::class.java) {
     api = "CommonModel"
-    token = "GHSAT0AAAAAACAZQZBZFW367SWQA36MXINSZBVEPMQ"
+    token = "GHSAT0AAAAAACAZQZBYVBCM2B6UH3O7EJU2ZBVH3AA"
+    
     outputFile = "$rootDir/common/api/CommonModel2.yaml"
 }
 

@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 public class ApiDownloadTask extends DefaultTask {
     private final Logger LOGGER = Logging.getLogger(ApiDownloadTask.class);
     private final OkHttpClient httpClient = new OkHttpClient();
-    private final String GITHUB_HOST = "https://raw.githubusercontent.com/MaximKa99/epam-microservices/main/APIs/";
+    private final String GITHUB_HOST = "https://raw.githubusercontent.com/MaximKa99/epam-microservices/feature/move-all-apis/APIs/";
     private String token;
     private String api;
     private String outputFile;
