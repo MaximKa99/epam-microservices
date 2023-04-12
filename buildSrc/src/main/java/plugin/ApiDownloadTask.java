@@ -5,10 +5,12 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.internal.impldep.org.eclipse.jgit.api.Git;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,35 +21,36 @@ import java.nio.file.Paths;
 public class ApiDownloadTask extends DefaultTask {
     private final Logger LOGGER = Logging.getLogger(ApiDownloadTask.class);
     private final OkHttpClient httpClient = new OkHttpClient();
-    private final String GITHUB_HOST = "https://raw.githubusercontent.com/MaximKa99/epam-microservices/feature/move-all-apis/APIs/";
-    private String token;
     private String api;
     private String outputFile;
+    private String branch;
 
     @TaskAction
     public void download() {
-        String url = GITHUB_HOST + api + ".yaml?token=" + token;
+        String url = String
+                .format("https://raw.githubusercontent.com/MaximKa99/epam-microservices/%s/APIs/%s.yaml",
+                        branch,
+                        api
+                );
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
-        LOGGER.info("Downloading " + "url");
         try {
-            Response response = httpClient.newCall(request).execute();
+            Request fileDownloadRequest = new Request.Builder()
+                    .url(url)
+                    .build();
+            ResponseBody fileResponseBody = httpClient.newCall(fileDownloadRequest).execute().body();
+            String content = fileResponseBody.string();
 
-            LOGGER.info("Writting to " + outputFile);
-
-            ResponseBody responseBody = response.body();
-
-            String content = responseBody.string();
             File file = new File(outputFile);
-
             setUpOutputDir(file);
             Files.write(Paths.get(outputFile), content.getBytes(StandardCharsets.UTF_8));
-            responseBody.close();
+
+            fileResponseBody.close();
         } catch (IOException exception) {
-            LOGGER.error("Cannot load API " + api + ". The following error occured: " + exception.getMessage());
+            throw new GradleException("Cannot load API "
+                    + api
+                    + ". The following error occured: "
+                    + exception.getMessage()
+            );
         }
     }
 
@@ -56,15 +59,6 @@ public class ApiDownloadTask extends DefaultTask {
         if (parentFile != null) {
             parentFile.mkdirs();
         }
-    }
-
-    @Input
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     @Input
@@ -83,5 +77,14 @@ public class ApiDownloadTask extends DefaultTask {
 
     public void setOutputFile(String outputFile) {
         this.outputFile = outputFile;
+    }
+
+    @Input
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 }
