@@ -5,7 +5,7 @@ plugins {
     kotlin("plugin.spring") version "1.8.0"
     id("org.springframework.boot") version "2.7.2"
     id("io.spring.dependency-management") version "1.1.0"
-    id("io.swagger.swaggerhub") version "1.0.1"
+    id("org.ajoberstar.grgit") version "4.1.1"
     id("org.openapi.generator") version "6.3.0"
     application
 }
@@ -49,7 +49,8 @@ dependencies {
 }
 
 tasks.named("compileKotlin") {
-    dependsOn("openApiGenerateAll")
+    dependsOn("downloadAllSpecs")
+    dependsOn("generateAllSpecs")
 }
 
 val apiList = listOf("CommonModel", "ResourceApi", "SongApi")
@@ -73,43 +74,29 @@ val generateTasks = apiList.map {
     }
 }
 
-val downloadSpecTasks = apiList.map {
-    tasks.register(it + "_download", io.swagger.swaggerhub.tasks.DownloadTask::class.java) {
+val downloadTasks = apiList.map {
+    tasks.register("download_$it", plugin.ApiDownloadTask::class.java) {
         api = it
-        owner = "MaximKa99"
-        version = "1.0"
         outputFile = "$rootDir/resource-service/api/$it.yaml"
-        token = "21eb0ad4-4a4c-4ac0-97a3-345609256a34"
-        format = "yaml"
+        branch = grgit.branch.current().name
     }
 }
 
-tasks.register("swaggerhubDownloadAll") {
-    group = "swaggerhub"
+tasks.register("generateAllSpecs") {
+    group = "apiHub"
 
-    dependsOn(downloadSpecTasks)
-}
-
-tasks.register("openApiGenerateAll") {
-    group = "openapi tools"
     dependsOn(generateTasks)
 }
 
+tasks.register("downloadAllSpecs") {
+    group = "apiHub"
 
+    dependsOn(downloadTasks)
+}
 
 sourceSets["main"].java {
     srcDirs("$buildDir/generated/src/main/java")
 }
-
-tasks.swaggerhubUpload {
-    api = "ResourceApi"
-    owner = "MaximKa99"
-    version = "1.0"
-    inputFile = "$rootDir/resource-service/api/ResourceApi.yaml"
-    token = "21eb0ad4-4a4c-4ac0-97a3-345609256a34"
-    format = "yaml"
-}
-
 
 application {
     mainClass.set("com.epam.AppKt")
