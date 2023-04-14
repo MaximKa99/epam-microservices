@@ -46,4 +46,17 @@ class RouteConfig(
                     .uri("lb://RESOURCE-PROCESSOR")
             }.build()
     }
+
+    @Bean
+    fun storageRoute(builder: RouteLocatorBuilder): RouteLocator {
+        return builder.routes()
+            .route {
+                it
+                    .path("/storage/**")
+                    .filters { f ->
+                        f.rewritePath("/resource-processor/(?<segment>.*)", "/\${segment}")
+                    }
+                    .uri("lb://STORAGE")
+            }.build()
+    }
 }

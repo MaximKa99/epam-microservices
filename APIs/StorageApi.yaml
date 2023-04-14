@@ -43,7 +43,7 @@ paths:
       tags:
         - storage
       parameters:
-        - name: id
+        - name: ids
           in: query
           required: true
           schema:
