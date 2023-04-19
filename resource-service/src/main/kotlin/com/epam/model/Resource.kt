@@ -16,4 +16,6 @@ class Resource {
     var type: String? = null
 
     var uuid: String? = null
+
+    var bucket: String? = null
 }

@@ -37,6 +37,7 @@ dependencies {
     implementation("io.swagger.core.v3:swagger-annotations:2.2.8")
     implementation("javax.validation:validation-api:2.0.1.Final")
     implementation("org.openapitools:jackson-databind-nullable:0.2.6")
+    implementation("io.github.resilience4j:resilience4j-circuitbreaker:1.7.1")
 
     implementation("software.amazon.awssdk:s3:2.19.26")
     implementation("software.amazon.awssdk:sqs:2.19.26")
@@ -57,11 +58,11 @@ tasks.named("compileKotlin") {
     dependsOn("generateAllSpecs")
 }
 
-val apis = listOf("CommonModel", "ResourceApi")
+val apis = listOf("CommonModel", "ResourceApi", "StorageApi")
 
 val generateTasks = apis.map {
     tasks.register(it + "_generate", GenerateTask::class.java) {
-        generatorName.set("kotlin-spring")
+        generatorName.set("spring")
         inputSpec.set("$rootDir/resource-service/api/$it.yaml")
         outputDir.set("$buildDir/generated")
         modelPackage.set("com.epam.dto")
@@ -98,7 +99,7 @@ tasks.register("downloadAllSpecs") {
 }
 
 sourceSets["main"].java {
-    srcDirs("$buildDir/generated/src/main/kotlin")
+    srcDirs("$buildDir/generated/src/main/java")
 }
 
 application {

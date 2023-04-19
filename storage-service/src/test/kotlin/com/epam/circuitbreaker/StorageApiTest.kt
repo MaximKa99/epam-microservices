@@ -1,4 +1,4 @@
-package com.epam.api
+package com.epam.circuitbreaker
 
 import com.epam.container.PostgresContainer
 import com.epam.dto.StorageIdView
@@ -61,27 +61,43 @@ class StorageApiTest {
 
     @Test
     fun `delete storages`() {
-        val toBeDeletedStorages = listOf(3, 4).map {
+        val toBeDeletedStorages = listOf(1, 2).map {
             Storage().apply {
-                storageType = "storageType$this"
-                bucket = "bucket$this"
-                path = "path$this"
+                storageType = "storageType$it"
+                bucket = "bucket$it"
+                path = "path$it"
             }
         }
         storageRepository.saveAll(toBeDeletedStorages)
 
-        val actual = restTemplate.exchange<List<StorageWithIdView>>(
-            "http://localhost:$port/api/storages",
+        val actual = restTemplate.exchange<List<StorageIdView>>(
+            "http://localhost:$port/api/storages?ids={ids}",
             HttpMethod.DELETE,
-            uriVariables = mapOf("ids" to "3,4")
+            HttpEntity.EMPTY,
+            mapOf("ids" to "${toBeDeletedStorages[0].id},${toBeDeletedStorages[1].id}")
             ).body
 
-        Assertions.assertEquals(toBeDeletedStorages[0].bucket, actual[0].bucket)
-        Assertions.assertEquals(toBeDeletedStorages[0].bucket, actual[0].bucket)
-        Assertions.assertEquals(toBeDeletedStorages[0].bucket, actual[0].bucket)
+        Assertions.assertEquals(toBeDeletedStorages[0].id, actual[0].id)
+        Assertions.assertEquals(toBeDeletedStorages[1].id, actual[1].id)
+    }
 
-        Assertions.assertEquals(toBeDeletedStorages[1].bucket, actual[1].bucket)
-        Assertions.assertEquals(toBeDeletedStorages[1].bucket, actual[1].bucket)
-        Assertions.assertEquals(toBeDeletedStorages[1].bucket, actual[1].bucket)
+    @Test
+    fun `get storages`() {
+        val expected = Storage().apply {
+            storageType = "expected"
+            bucket = "expected"
+            path = "expected"
+        }
+
+        storageRepository.save(expected)
+
+        val response = restTemplate.exchange<List<StorageWithIdView>>(
+            "http://localhost:$port/api/storages",
+            HttpMethod.GET
+        ).body
+
+        Assertions.assertTrue(response.map {
+            it.id
+        }.contains(expected.id))
     }
 }

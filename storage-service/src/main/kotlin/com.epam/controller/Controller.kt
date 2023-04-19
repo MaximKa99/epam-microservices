@@ -25,15 +25,22 @@ class Controller(
         })
     }
 
-    override fun deleteStoragesByIds(id: MutableList<Long>?): ResponseEntity<MutableList<StorageIdView>> {
-        return ResponseEntity.ok(storageService.deleteSongsByIds(id.toList()).map {
-            StorageIdView().apply {
-                this.id = it.id
-            }
-        }.toMutableList())
+    override fun deleteStoragesByIds(ids: MutableList<Long>): ResponseEntity<MutableList<StorageIdView>> {
+        return ResponseEntity.ok(storageService.deleteSongsByIds(ids.toList()).map {
+                StorageIdView().apply {
+                    this.id = it.id
+                }
+            }.toMutableList())
     }
 
     override fun getStorageList(): ResponseEntity<MutableList<StorageWithIdView>> {
-        return super.getStorageList()
+        return ResponseEntity.ok(storageService.getStorages().map {
+            StorageWithIdView().apply {
+                id = it.id
+                storageType = it.storageType
+                bucket = it.bucket
+                path = it.path
+            }
+        }.toMutableList())
     }
 }

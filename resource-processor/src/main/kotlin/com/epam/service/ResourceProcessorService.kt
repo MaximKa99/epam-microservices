@@ -23,7 +23,7 @@ class ResourceProcessorService(
 
     @Scheduled(fixedDelay = 5000)
     fun processAudioQueue() {
-        adapterSQS.getMessages(ResourceType.Audio.queue).forEach {
+        adapterSQS.getMessages(ResourceType.Audio.queueIn).forEach {
             val byteArray = resourceApi.getResource(it.body().toLong()).body?.inputStream
 
             val handler = BodyContentHandler()
@@ -41,7 +41,8 @@ class ResourceProcessorService(
             songView.resourceId = it.body().toLong()
             songApi.saveSong(songView)
 
-            adapterSQS.deleteMessage(ResourceType.Audio.queue, it.receiptHandle())
+            adapterSQS.deleteMessage(ResourceType.Audio.queueIn, it.receiptHandle())
+            adapterSQS.putMessage(it.body(), ResourceType.Audio.queueOut)
         }
     }
 }

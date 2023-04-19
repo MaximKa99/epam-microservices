@@ -1,5 +1,8 @@
 package com.epam.service
 
+import com.epam.api.StorageApi
+import com.epam.dto.StorageView
+import com.epam.dto.StorageWithIdView
 import com.epam.exception.CustomException
 import com.epam.model.OutboxEvent
 import com.epam.model.Resource
@@ -14,6 +17,7 @@ import io.mockk.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.springframework.http.ResponseEntity
 import java.io.InputStream
 import java.util.*
 
@@ -23,13 +27,15 @@ class ResourceServiceTest {
     private val adapterS3 = mockk<AdapterS3>()
     private val adapterSQS = mockk<AdapterSQS>()
     private val mapper = ObjectMapper().registerKotlinModule()
+    private val storageApi = mockk<StorageApi>()
 
     private val underTest = ResourceService(
             resourceRepository,
             outBoxEventRepository,
             adapterS3,
             adapterSQS,
-            mapper
+            mapper,
+            storageApi,
     )
 
     @AfterEach
@@ -45,6 +51,12 @@ class ResourceServiceTest {
         }
         justRun { adapterS3.putResource(any(), any(), any()) }
         every { outBoxEventRepository.save(any()) } returns OutboxEvent()
+
+        every { storageApi.storageList } returns ResponseEntity.ok(listOf(StorageWithIdView().apply {
+            id = 1
+            storageType = "STAGING"
+            bucket = "staging.bucket"
+        }).toMutableList())
 
         val actual = underTest.saveResource(InputStream.nullInputStream(), ResourceType.Audio.type)
 
