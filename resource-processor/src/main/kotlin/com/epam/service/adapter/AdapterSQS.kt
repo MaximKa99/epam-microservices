@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.exception.SdkClientException
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.sqs.SqsClient
-import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest
-import software.amazon.awssdk.services.sqs.model.ListQueuesRequest
-import software.amazon.awssdk.services.sqs.model.Message
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
+import software.amazon.awssdk.services.sqs.model.*
 import java.net.URI
 
 @Service
@@ -37,6 +34,27 @@ class AdapterSQS {
             else -> sqsClient
                 .deleteMessage(DeleteMessageRequest.builder().queueUrl(url).receiptHandle(receiptHandler).build())
         }
+    }
+
+    @Retryable(include = [SdkClientException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
+    fun putMessage(message: String, queueName: String) {
+        val url = getQueueUrl(queueName) ?: sqsClient
+            .createQueue(
+                CreateQueueRequest.builder()
+                .attributes(mapOf(
+                    QueueAttributeName.FIFO_QUEUE to "true",
+                    QueueAttributeName.CONTENT_BASED_DEDUPLICATION to "true"
+                ))
+                .queueName(queueName)
+                .build())
+            .queueUrl()
+
+        sqsClient.sendMessage(
+            SendMessageRequest.builder()
+            .messageBody(message)
+            .queueUrl(url)
+            .messageGroupId("processor-services")
+            .build())
     }
 
     private fun getQueueUrl(queueName: String): String? {

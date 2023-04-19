@@ -9,6 +9,7 @@ import software.amazon.awssdk.core.exception.SdkClientException
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
@@ -50,6 +51,21 @@ class AdapterS3 {
         }
 
         s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucket).key(key).build())
+    }
+
+
+    @Retryable(include = [SdkClientException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
+    fun copyResource(key: String, bucketSrc: String, bucketDest: String) {
+        if (!bucketExists(bucketDest)) {
+            s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketDest).build())
+        }
+
+        s3Client.copyObject(CopyObjectRequest.builder()
+            .sourceBucket(bucketSrc)
+            .sourceKey(key)
+            .destinationBucket(bucketDest)
+            .destinationKey(key)
+            .build())
     }
 
     private fun bucketExists(bucketName: String): Boolean {

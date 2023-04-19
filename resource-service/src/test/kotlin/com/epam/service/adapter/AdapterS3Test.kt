@@ -8,12 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.GenericContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.utility.DockerImageName
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest
@@ -36,6 +30,25 @@ class AdapterS3Test {
 
     @Autowired
     private lateinit var s3Client: S3Client
+
+    @Test
+    fun `copy resource`() {
+        val expected = byteArrayOf(1, 2, 3, 4, 5)
+        val bucketSrc = "test.src"
+        val key = UUID.randomUUID().toString()
+
+        s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketSrc).build())
+        s3Client.putObject(PutObjectRequest.builder().bucket(bucketSrc).key(key).build(), RequestBody.fromBytes(expected))
+
+        val bucketDest = "test.dest"
+
+        s3Adapter.copyResource(key, bucketSrc, bucketDest)
+
+        val actual = s3Client.getObject(GetObjectRequest.builder().bucket(bucketDest).key(key).build()).readAllBytes()
+
+        assertArrayEquals(expected, actual)
+    }
+
     @Test
     fun `put resource`() {
         val expected = byteArrayOf(1, 2, 3, 4, 5)

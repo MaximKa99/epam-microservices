@@ -57,6 +57,18 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://resource-postgres:5432/${POSTGRES_DB}
       AWS_ENDPOINT: ${AWS_ENDPOINT}
       SERVICE_REGISTRY: ${SERVICE_REGISTRY}
+  storage:
+    build: ./storage-service
+    ports:
+      - "50010:50005"
+    depends_on:
+      - storage-postgres
+      - service-registry
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://storage-postgres:5432/${POSTGRES_DB}
+      SERVICE_REGISTRY: ${SERVICE_REGISTRY}
   localstack:
     image: localstack/localstack
     ports:
@@ -73,6 +85,14 @@ services:
     image: postgres
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+  storage-postgres:
+    image: postgres
+    ports:
+      - "5431:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
