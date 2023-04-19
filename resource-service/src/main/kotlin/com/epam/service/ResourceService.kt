@@ -36,11 +36,6 @@ class ResourceService(
 
         when (ResourceType.of(type)) {
             ResourceType.Audio -> {
-                val uuid = UUID.randomUUID().toString()
-                resource.type = ResourceType.Audio.type
-                resource.uuid = uuid
-                val id = resourceRepository.save(resource).id ?: throw CustomException("smth went wrong", 500)
-
                 val storages = storageApi.storageList.body
                 val stagingStorage = storages?.firstOrNull {
                     it.storageType == "STAGING"
@@ -48,6 +43,13 @@ class ResourceService(
 
                 //TODO outbox is needed here
                 stagingBucket = stagingStorage.bucket
+
+                val uuid = UUID.randomUUID().toString()
+                resource.type = ResourceType.Audio.type
+                resource.uuid = uuid
+                resource.bucket = stagingBucket
+                val id = resourceRepository.save(resource).id ?: throw CustomException("smth went wrong", 500)
+
                 adapterS3.putResource(stream, uuid, stagingBucket)
 
                 val event = ResourceIdEvent(id)
@@ -75,10 +77,11 @@ class ResourceService(
         val resource = resourceOptional.get()
         val type = resource.type ?: throw CustomException("Smth went wrong", 500)
         val key = resource.uuid ?: throw CustomException("Smth went wrong", 500)
+        val bucket = resource.bucket ?: throw CustomException("Smth went wrong", 500)
 
 
         return when(ResourceType.of(type)) {
-            ResourceType.Audio -> adapterS3.getResource(key, ResourceType.Audio.bucket)
+            ResourceType.Audio -> adapterS3.getResource(key, bucket)
         }
     }
 

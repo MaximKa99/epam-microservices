@@ -69,6 +69,7 @@ class ResourceServiceTest {
             id = 1
             type = ResourceType.Audio.type
             uuid = UUID.randomUUID().toString()
+            bucket = "buckettest"
         })
         every { adapterS3.getResource(any(), any()) } returns InputStream.nullInputStream()
 

@@ -8,7 +8,7 @@ enum class ResourceType(
     val queueIn: String,
     val queueOut: String
 ) {
-    Audio("audio/mpeg", "audio", "audio.out.fifo", "audio.in.fifo");
+    Audio("audio/mpeg", "audio", "audioout.fifo", "audioin.fifo");
 
     companion object {
         const val HEADER_NAME = "Resource-Type"
