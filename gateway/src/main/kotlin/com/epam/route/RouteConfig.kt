@@ -2,6 +2,7 @@ package com.epam.route
 
 import org.springframework.cloud.gateway.route.RouteLocator
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
+import org.springframework.cloud.gateway.route.builder.routes
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -54,9 +55,23 @@ class RouteConfig(
                 it
                     .path("/storage/**")
                     .filters { f ->
-                        f.rewritePath("/resource-processor/(?<segment>.*)", "/\${segment}")
+                        f.rewritePath("/storage/(?<segment>.*)", "/\${segment}")
                     }
                     .uri("lb://STORAGE")
             }.build()
+    }
+
+    @Bean
+    fun kibanaRoute(builder: RouteLocatorBuilder): RouteLocator {
+        return builder.routes {
+            route {
+                this
+                    .path("/kibana/**")
+                    .filters {f ->
+                        f.rewritePath("/kibana/(?<segment>.*)", "/\${segment}")
+                    }
+                    .uri("http://kibana")
+            }
+        }
     }
 }

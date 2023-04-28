@@ -1,9 +1,13 @@
 FROM openjdk:11
 
-ENV SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5431/postgres"
-ENV SPRING_DATASOURCE_USERNAME=user
-ENV SPRING_DATASOURCE_PASSWORD=password
+RUN wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+RUN apt-get install apt-transport-https
+RUN echo "deb https://artifacts.elastic.co/packages/oss-8.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-8.7.list
+RUN apt-get update && apt-get install metricbeat
+
+COPY ./metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.yml
 
 COPY ./build/libs/storage-service.jar app.jar
+COPY run.sh run.sh
 
-ENTRYPOINT ["java",  "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:50005", "-jar", "app.jar"]
+ENTRYPOINT ["./run.sh"]

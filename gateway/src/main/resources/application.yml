@@ -1,6 +1,19 @@
+logstash:
+  server: logstash:50000
 spring:
   application:
     name: gateway
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    metrics:
+      enabled: true
+  security:
+    enabled: false
 
 eureka:
   client:

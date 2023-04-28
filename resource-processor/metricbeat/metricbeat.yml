@@ -1,0 +1,63 @@
+########################## Metricbeat Configuration ###########################
+
+# This file is a full configuration example documenting all non-deprecated
+# options in comments. For a shorter configuration example, that contains only
+# the most common options, please see metricbeat.yml in the same directory.
+#
+# You can find the full configuration reference here:
+# https://www.elastic.co/guide/en/beats/metricbeat/index.html
+
+#============================  Config Reloading ===============================
+
+# Config reloading allows to dynamically load modules. Each file which is
+# monitored must contain one or multiple modules as a list.
+metricbeat.config.modules:
+
+  # Glob pattern for configuration reloading
+  path: ${path.config}/modules.d/*.yml
+
+  # Period on which files under path should be checked for changes
+  reload.period: 10s
+
+  # Set to true to enable config reloading
+  reload.enabled: false
+
+# Maximum amount of time to randomly delay the start of a metricset. Use 0 to
+# disable startup delay.
+metricbeat.max_start_delay: 10s
+
+name: "resource-processor"
+
+metricbeat.modules:
+  - module: jolokia
+    period: 10s
+    metricsets: ["jmx"]
+    hosts: ["localhost:8080"]
+    namespace: "metrics"
+    http_method: "GET"
+    path: "/actuator/jolokia"
+    jmx.mappings:
+      - mbean: 'java.lang:type=Memory'
+        attributes:
+          - attr: HeapMemoryUsage
+            field: memory.heap_usage
+      - mbean: 'java.lang:type=Threading'
+        attributes:
+          - attr: PeakThreadCount
+            field: thread.max_count
+          - attr: ThreadCount
+            field: thread.current_count
+    jmx.application: resource-processor
+    jmx.instance:
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  username: "elastic"
+  password: "changeme"
+
+#output.file:
+#  enabled: true
+#  codec.json:
+#    pretty: true
+#  path: /metrics
+#  filename: metrics
