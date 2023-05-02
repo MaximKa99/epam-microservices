@@ -5,6 +5,7 @@ import com.epam.dto.DeletedResourcesView
 import com.epam.dto.ResourceIdView
 import com.epam.exception.CustomException
 import com.epam.service.ResourceService
+import org.slf4j.LoggerFactory
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
@@ -16,7 +17,10 @@ import org.springframework.web.multipart.MultipartFile
 class ResourceController(
     private val resourceService: ResourceService,
 ): ResourceApi {
+    private val LOGGER = LoggerFactory.getLogger(this::class.java)
     override fun deleteResource(ids: List<Long>): ResponseEntity<DeletedResourcesView> {
+        LOGGER.info("Received request to delete resources with ids=$ids")
+
         return ResponseEntity.ok(
             DeletedResourcesView().apply {
                 this.ids = ids.map { resourceService.deleteResource(it) }
@@ -25,6 +29,8 @@ class ResourceController(
     }
 
     override fun getResource(id: Long): ResponseEntity<Resource> {
+        LOGGER.info("Received request to get resource with id=$id")
+
         val stream = resourceService.getResource(id)
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
@@ -37,6 +43,8 @@ class ResourceController(
         resourceType: String?,
         file: MultipartFile?
     ): ResponseEntity<ResourceIdView> {
+        LOGGER.info("Received request to save resource")
+
         if (file?.inputStream == null || resourceType == null) {
             throw CustomException("Bad request", 400)
         }

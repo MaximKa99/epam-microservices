@@ -59,7 +59,7 @@ class AdapterSQSTest {
     @Test
     fun `delete message`() {
         val expected = "test"
-        val testQueue = "test.fifo"
+        val testQueue = "test2.fifo"
 
         val url = sqsClient
                 .createQueue(CreateQueueRequest.builder()

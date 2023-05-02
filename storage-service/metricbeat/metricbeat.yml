@@ -34,7 +34,6 @@ metricbeat.modules:
     metricsets: ["jmx"]
     hosts: ["localhost:8080"]
     namespace: "metrics"
-    http_method: "GET"
     path: "/actuator/jolokia"
     jmx.mappings:
       - mbean: 'java.lang:type=Memory'

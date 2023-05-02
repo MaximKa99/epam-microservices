@@ -23,6 +23,8 @@ dependencies {
 
     implementation("org.springframework.cloud:spring-cloud-starter-gateway")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("org.springframework.cloud:spring-cloud-sleuth-zipkin")
+    implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     implementation("net.logstash.logback:logstash-logback-encoder:7.3")

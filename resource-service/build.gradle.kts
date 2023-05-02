@@ -33,6 +33,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.retry:spring-retry")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.cloud:spring-cloud-sleuth-zipkin")
+    implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
     runtimeOnly("org.springframework.boot:spring-boot-starter-aop")
 
     implementation("io.swagger.core.v3:swagger-annotations:2.2.8")

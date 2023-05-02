@@ -3,6 +3,13 @@ logstash:
 spring:
   application:
     name: gateway
+  sleuth:
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://zipkin:9411/
+    sender:
+      type: web
 
 management:
   endpoints:

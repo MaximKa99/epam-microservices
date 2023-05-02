@@ -12,6 +12,7 @@ import com.epam.service.adapter.AdapterS3
 import com.epam.service.adapter.AdapterSQS
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -28,6 +29,7 @@ class ResourceService(
     private val mapper: ObjectMapper,
     @Qualifier("CircuitBreaker") private val storageApi: StorageApi,
 ) {
+    private val LOGGER = LoggerFactory.getLogger(this::class.java)
     private var stagingBucket = ""
 
     @Transactional
@@ -127,6 +129,8 @@ class ResourceService(
     @Scheduled(fixedDelay = 5000)
     @Transactional
     fun updateResourceStatus() {
+        LOGGER.info("Starting updating resources' statuses")
+
         val storages = storageApi.storageList.body
         val permanentStorage = storages?.firstOrNull {
             it.storageType == "PERMANENT"
@@ -139,8 +143,8 @@ class ResourceService(
             it.bucket = permanentStorage.bucket
         }
 
-        ids.forEach {
-            adapterS3.copyResource(it.toString(), stagingBucket, permanentStorage.bucket)
+        entitiesToBeUpdated.forEach {
+            adapterS3.copyResource(it.uuid.toString(), stagingBucket, permanentStorage.bucket)
         }
     }
 }

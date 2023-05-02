@@ -12,6 +12,13 @@ ribbon:
 spring:
   application:
     name: resource-processor
+  sleuth:
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://zipkin:9411/
+    sender:
+      type: web
 
 eureka:
   client:
