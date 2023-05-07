@@ -1,7 +1,13 @@
 version: "3.9"
+networks:
+  docker-compose-elk_elk:
+    external: true
 services:
   gateway:
     build: ./gateway
+    networks:
+      - docker-compose-elk_elk
+      - default
     ports:
       - "8080:8080"
       - "50005:50005"
@@ -14,11 +20,17 @@ services:
       - resource-processor
   service-registry:
     build: ./service-registry
+    networks:
+      - docker-compose-elk_elk
+      - default
     ports:
       - "8761:8761"
       - "50006:50005"
   resource-processor:
     build: ./resource-processor
+    networks:
+      - docker-compose-elk_elk
+      - default
     ports:
       - "50007:50005"
     depends_on:
@@ -33,6 +45,9 @@ services:
       SERVICE_REGISTRY: ${SERVICE_REGISTRY}
   song:
     build: ./song-service
+    networks:
+      - docker-compose-elk_elk
+      - default
     ports:
       - "50008:50005"
     depends_on:
@@ -45,6 +60,9 @@ services:
       SERVICE_REGISTRY: ${SERVICE_REGISTRY}
   resource:
     build: ./resource-service
+    networks:
+      - docker-compose-elk_elk
+      - default
     ports:
       - "50009:50005"
     depends_on:
@@ -59,8 +77,12 @@ services:
       SERVICE_REGISTRY: ${SERVICE_REGISTRY}
   storage:
     build: ./storage-service
+    networks:
+      - docker-compose-elk_elk
+      - default
     ports:
       - "50010:50005"
+      - "7777:8080"
     depends_on:
       - storage-postgres
       - service-registry
@@ -69,6 +91,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SPRING_DATASOURCE_URL: jdbc:postgresql://storage-postgres:5432/${POSTGRES_DB}
       SERVICE_REGISTRY: ${SERVICE_REGISTRY}
+      LOGSTASH_SERVER: logstash:50000
   localstack:
     image: localstack/localstack
     ports:

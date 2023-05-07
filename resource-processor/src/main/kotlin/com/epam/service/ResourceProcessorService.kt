@@ -8,6 +8,7 @@ import com.epam.service.adapter.AdapterSQS
 import org.apache.tika.parser.AutoDetectParser
 import org.apache.tika.parser.ParseContext
 import org.apache.tika.sax.BodyContentHandler
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -20,9 +21,12 @@ class ResourceProcessorService(
     private val adapterSQS: AdapterSQS,
     private val songApi: SongApi,
 ) {
+    private val LOGGER = LoggerFactory.getLogger(this::class.java)
 
     @Scheduled(fixedDelay = 5000)
     fun processAudioQueue() {
+        LOGGER.info("ProcessingAudioQueue...")
+
         adapterSQS.getMessages(ResourceType.Audio.queueIn).forEach {
             val byteArray = resourceApi.getResource(it.body().toLong()).body?.inputStream
 

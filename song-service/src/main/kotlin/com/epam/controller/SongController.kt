@@ -6,6 +6,7 @@ import com.epam.api.SongApi
 import com.epam.dto.DeleteSongIds
 import com.epam.dto.SongIdView
 import com.epam.dto.SongView
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 class SongController(
     val songService: SongService,
 ): SongApi {
+    private val LOGGER = LoggerFactory.getLogger(this::class.java)
 
     override fun deleteSongsByIds(ids: MutableList<Long>): ResponseEntity<DeleteSongIds> {
         return ResponseEntity.ok(DeleteSongIds().apply {

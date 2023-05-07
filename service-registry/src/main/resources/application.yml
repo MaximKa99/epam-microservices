@@ -1,5 +1,27 @@
+logstash:
+  server: logstash:50000
 server:
   port: 8761
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    metrics:
+      enabled: true
+  security:
+    enabled: false
+spring:
+  application:
+    name: service-registry
+  sleuth:
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://zipkin:9411/
+    sender:
+      type: web
 eureka:
   client:
     registerWithEureka: false

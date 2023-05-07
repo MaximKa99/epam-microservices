@@ -1,3 +1,5 @@
+logstash:
+  server: logstash:50000
 aws:
   endpoint: http://localhost:4566
 
@@ -5,6 +7,16 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${SERVICE_REGISTRY:http://localhost:8761/eureka}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    metrics:
+      enabled: true
+  security:
+    enabled: false
 spring:
   servlet:
     multipart:
@@ -22,3 +34,10 @@ spring:
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
+  sleuth:
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://zipkin:9411/
+    sender:
+      type: web
