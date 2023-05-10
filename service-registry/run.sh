@@ -1,6 +1,6 @@
 #!/bin/sh
 
-metricbeat setup -e
+metricbeat setup --e
 service metricbeat start
 
 

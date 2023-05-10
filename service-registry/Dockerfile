@@ -10,4 +10,4 @@ COPY ./metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.yml
 COPY ./build/libs/service-registry.jar app.jar
 COPY run.sh run.sh
 
-ENTRYPOINT ["./run.sh"]
+ENTRYPOINT ["sh", "run.sh"]
