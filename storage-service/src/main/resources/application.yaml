@@ -27,6 +27,22 @@ spring:
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://keycloack:8080/realms/epam
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: storage
+            authorization-grant-type: authorization_code
+            scope: openid
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloack:8080/realms/epam
+
   sleuth:
     sampler:
       probability: 1.0

@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install metricbeat
 
 COPY ./metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.yml
 
-COPY ./build/libs/auth-service.jar app.jar
+COPY ./build/libs/resource-processor.jar app.jar
 COPY run.sh run.sh
 
-ENTRYPOINT ["sh", "run.sh"]
+ENTRYPOINT ["./run.sh"]
