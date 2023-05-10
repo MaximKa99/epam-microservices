@@ -1,5 +1,6 @@
 package com.epam.config
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -9,6 +10,7 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
+@ConditionalOnProperty(prefix = "test", name = ["security"], havingValue = "true", matchIfMissing = false)
 class SecurityConfig(
 ) {
     @Bean
