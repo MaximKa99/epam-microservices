@@ -32,7 +32,6 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.cloud:spring-cloud-sleuth-zipkin")
-    implementation("org.springframework.security:spring-security-oauth2-client")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jolokia:jolokia-core")

@@ -74,4 +74,18 @@ class RouteConfig(
             }
         }
     }
+
+    @Bean
+    fun keycloakRoute(builder: RouteLocatorBuilder): RouteLocator {
+        return builder.routes {
+            route {
+                this
+                    .path("/keycloak/**")
+                    .filters {f ->
+                        f.rewritePath("/keycloak/(?<segment>.*)", "/\${segment}")
+                    }
+                    .uri("http://keycloak:8080")
+            }
+        }
+    }
 }
