@@ -1,3 +1,8 @@
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
 logstash:
   server: logstash:50000
 eureka:
@@ -27,6 +32,22 @@ spring:
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
+  security:
+    oauth2:
+#      client:
+#        provider:
+#          keycloak:
+#            issuer-uri: http://keycloak:8080/realms/epam
+#            user-name-attribute: preferred_username
+#        registration:
+#          keycloak:
+#            client-id: storage
+#            authorization-grant-type: authorization_code
+#            scope: openid
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/epam
+
   sleuth:
     sampler:
       probability: 1.0
